@@ -22,7 +22,7 @@ public class Animal : MonoBehaviour
     Animator animator;
     void Start()
     {
-        Animaltype = (AnimalType)Random.Range(0, 7);
+        Animaltype = (AnimalType)Random.Range(0, 6);
         transform.name = Animaltype.ToString();
         animator = GetComponent<Animator>();
         animator.Play(Animaltype.ToString());

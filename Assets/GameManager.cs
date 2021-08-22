@@ -10,35 +10,37 @@ public class GameManager : MonoBehaviour
     GameObject animalGo;
     float xGap;
     float yGap;
-
+    float animalScaleX;
     int row = 10;
     int column = 6;
-    List<List<GameObject>> animals = new List<List<GameObject>>();
-
+    ArrayList[] animals;
 
     void Start()
     {
         animalParent = GameObject.Find("AnimalParent").transform;
         animalGo = (GameObject)Resources.Load(animalGoString);
-        var colSize = animalGo.GetComponent<BoxCollider>().size;
-        xGap = colSize.x;
-        yGap = colSize.y;
+        animalScaleX = animalGo.transform.localScale.x;
+        var animalColSize = animalGo.GetComponent<BoxCollider>().size;
+        xGap = animalColSize.x;
+        yGap = animalColSize.y;
         GenerateAnimals();
     }
     void GenerateAnimals()
     {
+        animals = new ArrayList[column];
         for (int x = 0; x < column; x++)
         {
+            animals[x] = new ArrayList();
             for (int y = 0; y < row; y++)
             {
-                animals[x][y] = CreateAnimal(x, y);
+                animals[x].Add(CreateAnimal(x, y));
             }
         }
     }
 
     GameObject CreateAnimal(int x, int y)
     {
-        var pos = new Vector3(x * xGap, y * yGap);
+        var pos = new Vector3(x * xGap * animalScaleX + 0.01f, y * yGap + 0.01f);
         var newGo = Instantiate(animalGo, pos, Quaternion.identity, animalParent);
         return newGo;
     }
