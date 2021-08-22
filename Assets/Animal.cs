@@ -23,6 +23,7 @@ public class Animal : MonoBehaviour
     {
         isMoving = true;
         rigid = GetComponent<Rigidbody>();
+        rigid.AddForce(0, -1f, 0, ForceMode.Force);
         Animaltype = (AnimalType)Random.Range(0, 6);
         transform.name = Animaltype.ToString();
         animator = GetComponent<Animator>();
@@ -36,11 +37,13 @@ public class Animal : MonoBehaviour
             isMoving = false;
     }
 
-    public void Destroy()
+    public IEnumerator Destroy()
     {
         animator.Play("DestroyEffect");
-        GameManager.instance.Remove(this, Index);
+        // Wait 0.5f, cuz DestroyAnimation Lengh = 0.5f
+        yield return new WaitForSeconds(0.5f);
+        GameManager.instance.Remove(gameObject, Index);
         GameManager.instance.Reborn(Index);
-        Destroy(gameObject, 0.5f);
+        Destroy(gameObject);
     }
 }

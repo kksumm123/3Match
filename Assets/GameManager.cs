@@ -31,8 +31,8 @@ public class GameManager : MonoBehaviour
 
         animalScaleX = animalGo.transform.localScale.x;
         var animalColSize = animalGo.GetComponent<BoxCollider>().size;
-        xGap = animalColSize.x;
-        yGap = animalColSize.y;
+        xGap = animalColSize.x + 0.01f;
+        yGap = animalColSize.y + 0.01f;
         GenerateAnimals();
 
         isPlaying = true;
@@ -47,24 +47,15 @@ public class GameManager : MonoBehaviour
                 DestroyAnimals();
 
                 // Wait 0.5f, cuz DestroyAnimation Lengh = 0.5f
-                yield return new WaitForSeconds(0.5f);
-                RemoveNull();
+                yield return new WaitForSeconds(1);
             }
             yield return null;
         }
     }
 
-    private void RemoveNull()
-    {
-        for (int x = 0; x < animals.Length; x++)
-            for (int y = 0; y < animals[x].Count; y++)
-                if (animals[x][y] == null)
-                    animals[x].RemoveAt(y);
-    }
-
     void DestroyAnimals()
     {
-        toDestroyAnimals.ForEach((x) => x.Destroy());
+        toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
     }
 
     void IsMatchedVertical()
@@ -109,7 +100,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
     bool IsMoving()
     {
         for (int x = 0; x < column; x++)
@@ -131,14 +121,14 @@ public class GameManager : MonoBehaviour
             animals[x] = new ArrayList();
             for (int y = 0; y < row; y++)
             {
-                animals[x].Add(CreateAnimal(x, y));
+                animals[x].Add(CreateAnimal(x, x * xGap * animalScaleX, y * yGap));
             }
         }
     }
 
-    GameObject CreateAnimal(int x, int y)
+    GameObject CreateAnimal(int x, float posX, float posY)
     {
-        var pos = new Vector3(x * xGap * animalScaleX + 0.1f, y * yGap + 0.1f);
+        var pos = new Vector3(posX, posY);
         var newGo = Instantiate(animalGo, pos, Quaternion.identity, animalParent);
         newGo.GetComponent<Animal>().Index = x;
         return newGo;
@@ -153,12 +143,13 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public void Remove(Animal animal, int index)
+    public void Remove(GameObject animal, int index)
     {
         animals[index].Remove(animal);
     }
     public void Reborn(int index)
     {
-        animals[index].Add(CreateAnimal(index, animals[index].Count));
+        var newY = 2 + GetAnimal(index, animals[index].Count - 1).transform.position.y;
+        animals[index].Add(CreateAnimal(index, index * xGap * animalScaleX, newY + yGap));
     }
 }
