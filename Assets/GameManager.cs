@@ -22,12 +22,17 @@ public class GameManager : MonoBehaviour
     int column = 6;
     public ArrayList[] animals;
     List<Animal> toDestroyAnimals = new List<Animal>();
+    readonly string touchEffectString = "TouchEffect";
+    GameObject touchEffectGo;
+    LayerMask animalLayer;
 
     bool isPlaying = false;
     IEnumerator Start()
     {
         animalParent = GameObject.Find("AnimalParent").transform;
         animalGo = (GameObject)Resources.Load(animalGoString);
+        touchEffectGo = (GameObject)Resources.Load(touchEffectString);
+        animalLayer = 1 << LayerMask.NameToLayer("Animal");
 
         animalScaleX = animalGo.transform.localScale.x;
         var animalColSize = animalGo.GetComponent<BoxCollider>().size;
@@ -52,10 +57,33 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
-
-    void DestroyAnimals()
+    Transform touchedAnimal;
+    void Update()
     {
-        toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
+        if (Input.GetMouseButtonDown(0))
+        {
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit, 30, animalLayer);
+            if (hit.transform)
+            {
+                if (touchedAnimal == null)
+                {
+                    touchedAnimal = hit.transform;
+                    Instantiate(touchEffectGo, touchedAnimal.position, Quaternion.identity);
+                }
+                else if (touchedAnimal != hit.transform)
+                {
+                    if (Vector3.Distance(touchedAnimal.position, hit.transform.position) > yGap)
+                    {
+                        touchedAnimal = null;
+                    }
+                    else
+                    {
+                    }
+                }
+            }
+        }
     }
 
     void IsMatchedVertical()
@@ -90,7 +118,12 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    void DestroyAnimals()
+    {
+        toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
+    }
 
+    #region Methods
     void AddtoDestroyAnimals(params Animal[] _animals)
     {
         foreach (var item in _animals)
@@ -152,4 +185,5 @@ public class GameManager : MonoBehaviour
         var newY = 2 + GetAnimal(index, animals[index].Count - 1).transform.position.y;
         animals[index].Add(CreateAnimal(index, index * xGap * animalScaleX, newY + yGap));
     }
+    #endregion Methods
 }

@@ -35,10 +35,6 @@ public class Animal : MonoBehaviour
         if (isAlive == false)
             return;
         CheckMoving();
-        if (Input.GetMouseButtonDown(0))
-        {
-            // 터치 구현 시작
-        }
     }
 
     void CheckMoving()
