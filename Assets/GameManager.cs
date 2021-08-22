@@ -52,17 +52,21 @@ public class GameManager : MonoBehaviour
                 IsMatchedHorizon();
                 DestroyAnimals();
 
-                // Wait 0.5f, cuz DestroyAnimation Lengh = 0.5f
-                yield return new WaitForSeconds(1);
+                // Wait 1f, cuz DestroyAnimation Lengh = 0.5f
+                yield return new WaitForSeconds(1f);
             }
             yield return null;
         }
     }
     Transform touchedAnimal;
+    GameObject touchedEffect;
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (IsMoving() == true)
+                return;
+
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 30, animalLayer);
@@ -71,21 +75,26 @@ public class GameManager : MonoBehaviour
                 if (touchedAnimal == null)
                 {
                     touchedAnimal = hit.transform;
-                    Instantiate(touchEffectGo, touchedAnimal.position, Quaternion.identity);
+                    touchedEffect = Instantiate(touchEffectGo, touchedAnimal.position, Quaternion.identity);
                 }
                 else if (touchedAnimal != hit.transform)
                 {
-                    if (Vector3.Distance(touchedAnimal.position, hit.transform.position) > Mathf.Max(xGap, yGap))
+                    if (Vector3.Distance(touchedAnimal.position, hit.transform.position) <= Mathf.Max(xGap, yGap) + 0.01f)
                     {
-                        touchedAnimal = null;
+                        touchedAnimal.DOMove(hit.transform.position, 0.5f)
+                                     .SetEase(Ease.OutBounce)
+                                     .SetLink(touchedAnimal.gameObject);
+                        hit.transform.DOMove(touchedAnimal.position, 0.5f)
+                                     .SetEase(Ease.OutBounce)
+                                     .SetLink(hit.transform.gameObject);
+
+                        SwipAnimals(touchedAnimal, hit.transform);
                     }
-                    else
-                    {
-                        touchedAnimal.DOMove(hit.transform.position, 1);
-                        hit.transform.DOMove(touchedAnimal.position, 1);
-                    }
+                    ClearTouchInfo();
                 }
             }
+            else
+                ClearTouchInfo();
         }
     }
 
@@ -127,6 +136,33 @@ public class GameManager : MonoBehaviour
     }
 
     #region Methods
+    private void ClearTouchInfo()
+    {
+        touchedAnimal = null;
+        Destroy(touchedEffect);
+    }
+
+    private void SwipAnimals(Transform animal1, Transform animal2)
+    {
+        var animal1Index = animal1.GetComponent<Animal>().Index;
+        var animal2Index = animal2.GetComponent<Animal>().Index;
+        int animal1Y = 0;
+        int animal2Y = 0;
+        for (int y = 0; y < animals[animal1Index].Count; y++)
+        {
+            if ((GameObject)animals[animal1Index][y] == animal1.gameObject)
+                animal1Y = y;
+        }
+        for (int y = 0; y < animals[animal2Index].Count; y++)
+        {
+            if ((GameObject)animals[animal2Index][y] == animal2.gameObject)
+                animal2Y = y;
+        }
+        var temp = animals[animal1Index][animal1Y];
+        animals[animal1Index][animal1Y] = animals[animal2Index][animal2Y];
+        animals[animal2Index][animal2Y] = temp;
+    }
+
     void AddtoDestroyAnimals(params Animal[] _animals)
     {
         foreach (var item in _animals)

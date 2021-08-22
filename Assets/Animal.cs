@@ -39,7 +39,7 @@ public class Animal : MonoBehaviour
 
     void CheckMoving()
     {
-        if (rigid.velocity.sqrMagnitude > 0.1f)
+        if (rigid.velocity.sqrMagnitude > 0.05f)
             isMoving = true;
         else
             isMoving = false;
@@ -48,8 +48,8 @@ public class Animal : MonoBehaviour
     public IEnumerator Destroy()
     {
         animator.Play("DestroyEffect");
-        // Wait 0.5f, cuz DestroyAnimation Lengh = 0.5f
-        yield return new WaitForSeconds(0.5f);
+        // Wait 0.4f, cuz DestroyAnimation Lengh = 0.5f
+        yield return new WaitForSeconds(0.4f);
         GameManager.instance.Remove(gameObject, Index);
         GameManager.instance.Reborn(Index);
         Destroy(gameObject);
