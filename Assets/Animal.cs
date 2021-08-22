@@ -29,7 +29,7 @@ public class Animal : MonoBehaviour
     }
     void Update()
     {
-        if (rigid.velocity.magnitude > 0.1f)
+        if (rigid.velocity.sqrMagnitude > 0.1f)
             isMoving = true;
         else
             isMoving = false;
