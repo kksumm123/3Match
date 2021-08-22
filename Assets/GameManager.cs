@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ public class GameManager : MonoBehaviour
 
         animalScaleX = animalGo.transform.localScale.x;
         var animalColSize = animalGo.GetComponent<BoxCollider>().size;
-        xGap = animalColSize.x + 0.01f;
+        xGap = animalColSize.x * animalScaleX + 0.01f;
         yGap = animalColSize.y + 0.01f;
         GenerateAnimals();
 
@@ -74,13 +75,14 @@ public class GameManager : MonoBehaviour
                 }
                 else if (touchedAnimal != hit.transform)
                 {
-                    if (Vector3.Distance(touchedAnimal.position, hit.transform.position) > yGap)
+                    if (Vector3.Distance(touchedAnimal.position, hit.transform.position) > Mathf.Max(xGap, yGap))
                     {
                         touchedAnimal = null;
                     }
                     else
                     {
-                        touchedAnimal.DOMove()
+                        touchedAnimal.DOMove(hit.transform.position, 1);
+                        hit.transform.DOMove(touchedAnimal.position, 1);
                     }
                 }
             }
@@ -155,7 +157,7 @@ public class GameManager : MonoBehaviour
             animals[x] = new ArrayList();
             for (int y = 0; y < row; y++)
             {
-                animals[x].Add(CreateAnimal(x, x * xGap * animalScaleX, y * yGap));
+                animals[x].Add(CreateAnimal(x, x * xGap, y * yGap));
             }
         }
     }
@@ -184,7 +186,7 @@ public class GameManager : MonoBehaviour
     public void Reborn(int index)
     {
         var newY = 2 + GetAnimal(index, animals[index].Count - 1).transform.position.y;
-        animals[index].Add(CreateAnimal(index, index * xGap * animalScaleX, newY + yGap));
+        animals[index].Add(CreateAnimal(index, index * xGap, newY + yGap));
     }
     #endregion Methods
 }
