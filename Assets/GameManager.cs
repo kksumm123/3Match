@@ -15,16 +15,43 @@ public class GameManager : MonoBehaviour
     int column = 6;
     ArrayList[] animals;
 
-    void Start()
+    bool isPlaying = false;
+    IEnumerator Start()
     {
         animalParent = GameObject.Find("AnimalParent").transform;
         animalGo = (GameObject)Resources.Load(animalGoString);
+
         animalScaleX = animalGo.transform.localScale.x;
         var animalColSize = animalGo.GetComponent<BoxCollider>().size;
         xGap = animalColSize.x;
         yGap = animalColSize.y;
         GenerateAnimals();
+
+        yield return null;
+        while (isPlaying)
+        {
+            if (IsMoving() == true)
+                continue;
+
+
+        }
     }
+
+    bool IsMoving()
+    {
+        for (int x = 0; x < column; x++)
+        {
+            for (int y = 0; y < row; y++)
+            {
+                if (((GameObject)animals[x][y]).GetComponent<Animal>().IsMoveing == true)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        return false;
+    }
+
     void GenerateAnimals()
     {
         animals = new ArrayList[column];
@@ -43,10 +70,5 @@ public class GameManager : MonoBehaviour
         var pos = new Vector3(x * xGap * animalScaleX + 0.01f, y * yGap + 0.01f);
         var newGo = Instantiate(animalGo, pos, Quaternion.identity, animalParent);
         return newGo;
-    }
-
-    void Update()
-    {
-
     }
 }

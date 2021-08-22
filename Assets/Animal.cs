@@ -13,18 +13,25 @@ public enum AnimalType
 public class Animal : MonoBehaviour
 {
     AnimalType m_animaltype;
-
-    public AnimalType Animaltype
-    {
-        get => m_animaltype;
-        set => m_animaltype = value;
-    }
+    public AnimalType Animaltype { get; set; }
     Animator animator;
+    Rigidbody rigid;
+    bool isMoving;
+    public bool IsMoveing => isMoving;
     void Start()
     {
+        isMoving = true;
+        rigid = GetComponent<Rigidbody>();
         Animaltype = (AnimalType)Random.Range(0, 6);
         transform.name = Animaltype.ToString();
         animator = GetComponent<Animator>();
         animator.Play(Animaltype.ToString());
+    }
+    void Update()
+    {
+        if (rigid.velocity.magnitude > 0.1f)
+            isMoving = true;
+        else
+            isMoving = false;
     }
 }
