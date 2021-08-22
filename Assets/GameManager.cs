@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
                 IsMatchedVertical();
                 IsMatchedHorizon();
                 DestroyAnimals();
-                TouchAndMove();
+                
 
                 // Wait 1f, cuz DestroyAnimation Lengh = 0.5f
                 yield return new WaitForSeconds(1f);
@@ -61,10 +61,13 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
-
+    private void Update()
+    {
+        TouchAndMove();
+    }
     Transform touchedAnimal;
     GameObject touchedEffect;
-    private void TouchAndMove()
+    void TouchAndMove()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -88,17 +91,19 @@ public class GameManager : MonoBehaviour
                         m_isSwipping = true;
                         SwipAnimals(touchedAnimal, hit.transform);
 
-                        touchedAnimal.DOMove(hit.transform.position, 0.4f)
+                        touchedAnimal.DOMove(hit.transform.position, 0.5f)
                                      .SetEase(Ease.OutBounce)
                                      .SetLink(touchedAnimal.gameObject)
                                      .OnComplete(() => m_isSwipping = false);
-                        hit.transform.DOMove(touchedAnimal.position, 0.4f)
+                        hit.transform.DOMove(touchedAnimal.position, 0.5f)
                                      .SetEase(Ease.OutBounce)
                                      .SetLink(hit.transform.gameObject)
                                      .OnComplete(() => m_isSwipping = false);
                     }
                     ClearTouchInfo();
                 }
+                else
+                    ClearTouchInfo();
             }
             else
                 ClearTouchInfo();
@@ -154,11 +159,13 @@ public class GameManager : MonoBehaviour
         var animal1Index = animal1.GetComponent<Animal>().Index;
         var animal2Index = animal2.GetComponent<Animal>().Index;
         int animal1Y = animals[animal1Index].IndexOf(animal1.gameObject);
-        int animal2Y = animals[animal1Index].IndexOf(animal2.gameObject);
+        int animal2Y = animals[animal2Index].IndexOf(animal2.gameObject);
 
         var temp = animals[animal1Index][animal1Y];
         animals[animal1Index][animal1Y] = animals[animal2Index][animal2Y];
         animals[animal2Index][animal2Y] = temp;
+        GetAnimal(animal1Index, animal1Y).Index = animal1Index;
+        GetAnimal(animal2Index, animal2Y).Index = animal2Index;
     }
 
     void AddtoDestroyAnimals(params Animal[] _animals)
