@@ -1,10 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+    void Awake()
+    {
+        instance = this;
+    }
+
     Transform animalParent;
     readonly string animalGoString = "Animal";
     GameObject animalGo;
@@ -13,7 +20,7 @@ public class GameManager : MonoBehaviour
     float animalScaleX;
     int row = 10;
     int column = 6;
-    ArrayList[] animals;
+    public ArrayList[] animals;
     List<Animal> toDestroyAnimals = new List<Animal>();
 
     bool isPlaying = false;
@@ -37,10 +44,27 @@ public class GameManager : MonoBehaviour
                 toDestroyAnimals.Clear();
                 IsMatchedVertical();
                 IsMatchedHorizon();
-                yield return null;
+                DestroyAnimals();
+
+                // Wait 0.5f, cuz DestroyAnimation Lengh = 0.5f
+                yield return new WaitForSeconds(0.5f);
+                RemoveNull();
             }
             yield return null;
         }
+    }
+
+    private void RemoveNull()
+    {
+        for (int x = 0; x < animals.Length; x++)
+            for (int y = 0; y < animals[x].Count; y++)
+                if (animals[x][y] == null)
+                    animals[x].RemoveAt(y);
+    }
+
+    void DestroyAnimals()
+    {
+        toDestroyAnimals.ForEach((x) => x.Destroy());
     }
 
     void IsMatchedVertical()
@@ -53,10 +77,25 @@ public class GameManager : MonoBehaviour
                 first = GetAnimal(x, y);
                 second = GetAnimal(x, y + 1);
                 third = GetAnimal(x, y + 2);
+
                 if (first.name == second.name && second.name == third.name)
-                {
                     AddtoDestroyAnimals(first, second, third);
-                }
+            }
+        }
+    }
+    void IsMatchedHorizon()
+    {
+        Animal first, second, third;
+        for (int x = 0; x < column - 2; x++)
+        {
+            for (int y = 0; y < row; y++)
+            {
+                first = GetAnimal(x, y);
+                second = GetAnimal(x + 1, y);
+                third = GetAnimal(x + 2, y);
+
+                if (first.name == second.name && second.name == third.name)
+                    AddtoDestroyAnimals(first, second, third);
             }
         }
     }
@@ -70,9 +109,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void IsMatchedHorizon()
-    {
-    }
 
     bool IsMoving()
     {
@@ -102,16 +138,27 @@ public class GameManager : MonoBehaviour
 
     GameObject CreateAnimal(int x, int y)
     {
-        var pos = new Vector3(x * xGap * animalScaleX + 0.01f, y * yGap + 0.01f);
+        var pos = new Vector3(x * xGap * animalScaleX + 0.1f, y * yGap + 0.1f);
         var newGo = Instantiate(animalGo, pos, Quaternion.identity, animalParent);
+        newGo.GetComponent<Animal>().Index = x;
         return newGo;
     }
+
     Animal GetAnimal(int x, int y)
     {
         if (animals.Length > x && animals[x].Count > y)
             return ((GameObject)animals[x][y]).GetComponent<Animal>();
 
-        Debug.LogError("여기에 오면 안됨");
+        Debug.LogWarning("인덱스 없으면 여기로 옴");
         return null;
+    }
+
+    public void Remove(Animal animal, int index)
+    {
+        animals[index].Remove(animal);
+    }
+    public void Reborn(int index)
+    {
+        animals[index].Add(CreateAnimal(index, animals[index].Count));
     }
 }

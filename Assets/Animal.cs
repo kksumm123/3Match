@@ -12,12 +12,13 @@ public enum AnimalType
 }
 public class Animal : MonoBehaviour
 {
-    AnimalType m_animaltype;
     public AnimalType Animaltype { get; set; }
     Animator animator;
     Rigidbody rigid;
     bool isMoving;
     public bool IsMoveing => isMoving;
+    int index;
+    public int Index { get; set; } // as GameManager.x, column 0 ~ 6
     void Start()
     {
         isMoving = true;
@@ -33,5 +34,13 @@ public class Animal : MonoBehaviour
             isMoving = true;
         else
             isMoving = false;
+    }
+
+    public void Destroy()
+    {
+        animator.Play("DestroyEffect");
+        GameManager.instance.Remove(this, Index);
+        GameManager.instance.Reborn(Index);
+        Destroy(gameObject, 0.5f);
     }
 }
