@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     LayerMask animalLayer;
 
     bool isPlaying = false;
+    bool m_isSwipping = false;
+    public bool IsSwipping => m_isSwipping;
     IEnumerator Start()
     {
         animalParent = GameObject.Find("AnimalParent").transform;
@@ -51,6 +53,7 @@ public class GameManager : MonoBehaviour
                 IsMatchedVertical();
                 IsMatchedHorizon();
                 DestroyAnimals();
+                TouchAndMove();
 
                 // Wait 1f, cuz DestroyAnimation Lengh = 0.5f
                 yield return new WaitForSeconds(1f);
@@ -58,9 +61,10 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
+
     Transform touchedAnimal;
     GameObject touchedEffect;
-    void Update()
+    private void TouchAndMove()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -81,14 +85,17 @@ public class GameManager : MonoBehaviour
                 {
                     if (Vector3.Distance(touchedAnimal.position, hit.transform.position) <= Mathf.Max(xGap, yGap) + 0.01f)
                     {
-                        touchedAnimal.DOMove(hit.transform.position, 0.5f)
-                                     .SetEase(Ease.OutBounce)
-                                     .SetLink(touchedAnimal.gameObject);
-                        hit.transform.DOMove(touchedAnimal.position, 0.5f)
-                                     .SetEase(Ease.OutBounce)
-                                     .SetLink(hit.transform.gameObject);
-
+                        m_isSwipping = true;
                         SwipAnimals(touchedAnimal, hit.transform);
+
+                        touchedAnimal.DOMove(hit.transform.position, 0.4f)
+                                     .SetEase(Ease.OutBounce)
+                                     .SetLink(touchedAnimal.gameObject)
+                                     .OnComplete(() => m_isSwipping = false);
+                        hit.transform.DOMove(touchedAnimal.position, 0.4f)
+                                     .SetEase(Ease.OutBounce)
+                                     .SetLink(hit.transform.gameObject)
+                                     .OnComplete(() => m_isSwipping = false);
                     }
                     ClearTouchInfo();
                 }
@@ -146,18 +153,9 @@ public class GameManager : MonoBehaviour
     {
         var animal1Index = animal1.GetComponent<Animal>().Index;
         var animal2Index = animal2.GetComponent<Animal>().Index;
-        int animal1Y = 0;
-        int animal2Y = 0;
-        for (int y = 0; y < animals[animal1Index].Count; y++)
-        {
-            if ((GameObject)animals[animal1Index][y] == animal1.gameObject)
-                animal1Y = y;
-        }
-        for (int y = 0; y < animals[animal2Index].Count; y++)
-        {
-            if ((GameObject)animals[animal2Index][y] == animal2.gameObject)
-                animal2Y = y;
-        }
+        int animal1Y = animals[animal1Index].IndexOf(animal1.gameObject);
+        int animal2Y = animals[animal1Index].IndexOf(animal2.gameObject);
+
         var temp = animals[animal1Index][animal1Y];
         animals[animal1Index][animal1Y] = animals[animal2Index][animal2Y];
         animals[animal2Index][animal2Y] = temp;
@@ -209,7 +207,18 @@ public class GameManager : MonoBehaviour
     Animal GetAnimal(int x, int y)
     {
         if (animals.Length > x && animals[x].Count > y)
-            return ((GameObject)animals[x][y]).GetComponent<Animal>();
+        {
+            Animal teter;
+            try
+            {
+                teter = ((GameObject)animals[x][y]).GetComponent<Animal>();
+            }
+            catch
+            {
+                teter = null;
+            }
+            return teter;
+        }
 
         Debug.LogWarning("ÀÎµ¦½º ¾øÀ¸¸é ¿©±â·Î ¿È");
         return null;

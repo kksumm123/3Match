@@ -35,6 +35,7 @@ public class Animal : MonoBehaviour
         if (isAlive == false)
             return;
         CheckMoving();
+        CheckSwipping();
     }
 
     void CheckMoving()
@@ -43,6 +44,11 @@ public class Animal : MonoBehaviour
             isMoving = true;
         else
             isMoving = false;
+    }
+
+    void CheckSwipping()
+    {
+        rigid.useGravity = !GameManager.instance.IsSwipping;
     }
 
     public IEnumerator Destroy()
