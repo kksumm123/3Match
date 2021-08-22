@@ -430,5 +430,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Animal
       objectReference: {fileID: 0}
+    - target: {fileID: 3071370582086436962, guid: c093951eb7fb8944d8d05bb6fb8f59bd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c093951eb7fb8944d8d05bb6fb8f59bd, type: 3}

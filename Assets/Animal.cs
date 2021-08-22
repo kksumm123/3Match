@@ -29,7 +29,19 @@ public class Animal : MonoBehaviour
         animator = GetComponent<Animator>();
         animator.Play(Animaltype.ToString());
     }
+    bool isAlive = true;
     void Update()
+    {
+        if (isAlive == false)
+            return;
+        CheckMoving();
+        if (Input.GetMouseButtonDown(0))
+        {
+            // 터치 구현 시작
+        }
+    }
+
+    void CheckMoving()
     {
         if (rigid.velocity.sqrMagnitude > 0.1f)
             isMoving = true;
