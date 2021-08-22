@@ -80,6 +80,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
+                        touchedAnimal.DOMove()
                     }
                 }
             }
