@@ -63,7 +63,7 @@ public class Animal : MonoBehaviour
 
     void OnMouseDown()
     {
-        GameManager.instance.touchedAnimal = transform;
+        GameManager.instance.pressedAnimal = transform;
     }
     private void OnMouseOver()
     {
