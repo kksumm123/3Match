@@ -7,12 +7,17 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    enum PlayType
+    public enum PlayModeType
     {
+        None,
         TouchAndTouch,
         Drag,
     }
-    [SerializeField] PlayType playType = PlayType.TouchAndTouch;
+    PlayModeType playMode;
+    public PlayModeType PlayMode
+    {
+        set => playMode = value;
+    }
 
     public static GameManager instance;
     void Awake()
@@ -40,6 +45,9 @@ public class GameManager : MonoBehaviour
     bool isMoveable = false;
     IEnumerator Start()
     {
+        while (playMode == PlayModeType.None)
+            yield return null;
+
         animalParent = GameObject.Find("AnimalParent").transform;
         animalGo = (GameObject)Resources.Load(animalGoString);
         touchEffectGo = (GameObject)Resources.Load(touchEffectString);
@@ -53,7 +61,7 @@ public class GameManager : MonoBehaviour
 
         isPlaying = true;
         isMoveable = true;
-        yield return null;
+        yield return new WaitForSeconds(1);
         while (isPlaying)
         {
             while (IsMoving() == false)
@@ -83,13 +91,13 @@ public class GameManager : MonoBehaviour
         if (isMoveable == false)
             return;
 
-        switch (playType)
+        switch (playMode)
         {
-            case PlayType.TouchAndTouch:
+            case PlayModeType.TouchAndTouch:
                 // Touch and Touch
                 Method_TouchAndTouch();
                 break;
-            case PlayType.Drag:
+            case PlayModeType.Drag:
                 // Drag
                 Method_Drag();
                 break;
