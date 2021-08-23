@@ -7,6 +7,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    enum PlayType
+    {
+        TouchAndTouch,
+        Drag,
+    }
+    [SerializeField] PlayType playType = PlayType.TouchAndTouch;
+
     public static GameManager instance;
     void Awake()
     {
@@ -30,6 +37,7 @@ public class GameManager : MonoBehaviour
     bool isPlaying = false;
     bool m_isSwipping = false;
     public bool IsSwipping => m_isSwipping;
+    bool isDragable = false;
     IEnumerator Start()
     {
         animalParent = GameObject.Find("AnimalParent").transform;
@@ -44,6 +52,7 @@ public class GameManager : MonoBehaviour
         GenerateAnimals();
 
         isPlaying = true;
+        isDragable = true;
         yield return null;
         while (isPlaying)
         {
@@ -54,8 +63,10 @@ public class GameManager : MonoBehaviour
                 IsMatchedHorizon(MatchMode.CheckAndDestroy);
                 DestroyAnimals();
 
+                isDragable = true;
                 // Wait 1f, cuz DestroyAnimation Lengh = 0.5f
                 yield return new WaitForSeconds(1f);
+                isDragable = false;
             }
             yield return null;
         }
@@ -64,9 +75,26 @@ public class GameManager : MonoBehaviour
     {
         TouchAndMove();
     }
-    Transform touchedAnimal;
+    public Transform touchedAnimal;
+    public Transform releasedAnimal;
+    bool firstTouch = true;
     GameObject touchedEffect;
     void TouchAndMove()
+    {
+        switch (playType)
+        {
+            case PlayType.TouchAndTouch:
+                // Touch and Touch
+                Method_TouchAndTouch();
+                break;
+            case PlayType.Drag:
+                // Drag
+                Method_Drag();
+                break;
+        }
+
+    }
+    void Method_TouchAndTouch()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -104,6 +132,42 @@ public class GameManager : MonoBehaviour
             else
                 ClearTouchInfo();
         }
+    }
+    void Method_Drag()
+    {
+        if (isDragable == false)
+            return;
+        if (Input.GetMouseButton(0) && m_isSwipping == false)
+        {
+            if (IsMoving() == true)
+                return;
+
+            if (touchedAnimal)
+            {
+                if (firstTouch == true)
+                {
+                    touchedEffect = Instantiate(touchEffectGo, touchedAnimal.position, Quaternion.identity);
+                    firstTouch = false;
+                }
+            }
+        }
+        else if (touchedAnimal != null && releasedAnimal != null
+                && touchedAnimal != releasedAnimal
+                && Vector3.Distance(touchedAnimal.position, releasedAnimal.position) <= Mathf.Max(xGap, yGap) + 0.01f
+                && m_isSwipping == false)
+        {
+            firstTouch = true;
+            m_isSwipping = true;
+            SwipAnimals(touchedAnimal, releasedAnimal);
+            bool isRePosition = IsMatchedVertical(MatchMode.Check) == true || IsMatchedHorizon(MatchMode.Check) == true;
+            if (isRePosition == false)
+                SwipAnimals(touchedAnimal, releasedAnimal);
+
+            MovePosition(touchedAnimal, releasedAnimal, isRePosition);
+            MovePosition(releasedAnimal, touchedAnimal, isRePosition);
+        }
+        else
+            ClearTouchInfo();
     }
 
     [SerializeField] float tweenMoveTime = 0.3f;
@@ -182,7 +246,9 @@ public class GameManager : MonoBehaviour
     #region Methods
     private void ClearTouchInfo()
     {
+        firstTouch = true;
         touchedAnimal = null;
+        releasedAnimal = null;
         Destroy(touchedEffect);
     }
 

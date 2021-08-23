@@ -60,4 +60,14 @@ public class Animal : MonoBehaviour
         GameManager.instance.Reborn(Index);
         Destroy(gameObject);
     }
+
+    void OnMouseDown()
+    {
+        GameManager.instance.touchedAnimal = transform;
+    }
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonUp(0))
+            GameManager.instance.releasedAnimal = transform;
+    }
 }
