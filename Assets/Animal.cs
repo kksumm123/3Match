@@ -23,7 +23,7 @@ public class Animal : MonoBehaviour
     {
         isMoving = true;
         rigid = GetComponent<Rigidbody>();
-        rigid.AddForce(0, -20f, 0, ForceMode.Force);
+        rigid.AddForce(0, -100f, 0, ForceMode.Force);
         Animaltype = (AnimalType)Random.Range(0, 6);
         transform.name = Animaltype.ToString();
         animator = GetComponent<Animator>();

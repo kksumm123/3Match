@@ -54,7 +54,6 @@ public class GameManager : MonoBehaviour
                 IsMatchedHorizon(MatchMode.CheckAndDestroy);
                 DestroyAnimals();
 
-
                 // Wait 1f, cuz DestroyAnimation Lengh = 0.5f
                 yield return new WaitForSeconds(1f);
             }
@@ -107,9 +106,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    [SerializeField] float tweenMoveTime = 0.3f;
     void MovePosition(Transform _transform, Transform target, bool isMatched)
     {
-        _transform.DOMove(target.position, 0.5f)
+        _transform.DOMove(target.position, tweenMoveTime)
                   .SetLoops(isMatched == true ? 1 : 2, LoopType.Yoyo)
                   .SetEase(Ease.OutBounce)
                   .SetLink(_transform.gameObject)
@@ -257,8 +257,8 @@ public class GameManager : MonoBehaviour
     }
     public void Reborn(int index)
     {
-        var newY = 2 + GetAnimal(index, animalsList[index].Count - 1).transform.position.y;
-        animalsList[index].Add(CreateAnimal(index, index * xGap, newY + yGap));
+        var newY = GetAnimal(index, animalsList[index].Count - 1).transform.position.y;
+        animalsList[index].Add(CreateAnimal(index, index * xGap, newY + (yGap * 2)));
     }
     #endregion Methods
 }
