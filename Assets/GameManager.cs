@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     float animalScaleX;
     int row = 10;
     int column = 6;
-    public ArrayList[] animals;
+    List<List<GameObject>> animalsList;
     List<Animal> toDestroyAnimals = new List<Animal>();
     readonly string touchEffectString = "TouchEffect";
     GameObject touchEffectGo;
@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
                 IsMatchedVertical();
                 IsMatchedHorizon();
                 DestroyAnimals();
-                
+
 
                 // Wait 1f, cuz DestroyAnimation Lengh = 0.5f
                 yield return new WaitForSeconds(1f);
@@ -158,12 +158,12 @@ public class GameManager : MonoBehaviour
     {
         var animal1Index = animal1.GetComponent<Animal>().Index;
         var animal2Index = animal2.GetComponent<Animal>().Index;
-        int animal1Y = animals[animal1Index].IndexOf(animal1.gameObject);
-        int animal2Y = animals[animal2Index].IndexOf(animal2.gameObject);
+        int animal1Y = animalsList[animal1Index].IndexOf(animal1.gameObject);
+        int animal2Y = animalsList[animal2Index].IndexOf(animal2.gameObject);
 
-        var temp = animals[animal1Index][animal1Y];
-        animals[animal1Index][animal1Y] = animals[animal2Index][animal2Y];
-        animals[animal2Index][animal2Y] = temp;
+        var temp = animalsList[animal1Index][animal1Y];
+        animalsList[animal1Index][animal1Y] = animalsList[animal2Index][animal2Y];
+        animalsList[animal2Index][animal2Y] = temp;
         GetAnimal(animal1Index, animal1Y).Index = animal1Index;
         GetAnimal(animal2Index, animal2Y).Index = animal2Index;
     }
@@ -192,14 +192,13 @@ public class GameManager : MonoBehaviour
 
     void GenerateAnimals()
     {
-        animals = new ArrayList[column];
+        animalsList = new List<List<GameObject>>(column);
         for (int x = 0; x < column; x++)
         {
-            animals[x] = new ArrayList();
+            animalsList.Add(new List<GameObject>(row));
+
             for (int y = 0; y < row; y++)
-            {
-                animals[x].Add(CreateAnimal(x, x * xGap, y * yGap));
-            }
+                animalsList[x].Add(CreateAnimal(x, x * xGap, y * yGap));
         }
     }
 
@@ -213,19 +212,8 @@ public class GameManager : MonoBehaviour
 
     Animal GetAnimal(int x, int y)
     {
-        if (animals.Length > x && animals[x].Count > y)
-        {
-            Animal teter;
-            try
-            {
-                teter = ((GameObject)animals[x][y]).GetComponent<Animal>();
-            }
-            catch
-            {
-                teter = null;
-            }
-            return teter;
-        }
+        if (animalsList.Count > x && animalsList[x].Count > y)
+            return animalsList[x][y].GetComponent<Animal>();
 
         Debug.LogWarning("ÀÎµ¦½º ¾øÀ¸¸é ¿©±â·Î ¿È");
         return null;
@@ -233,12 +221,12 @@ public class GameManager : MonoBehaviour
 
     public void Remove(GameObject animal, int index)
     {
-        animals[index].Remove(animal);
+        animalsList[index].Remove(animal);
     }
     public void Reborn(int index)
     {
-        var newY = 2 + GetAnimal(index, animals[index].Count - 1).transform.position.y;
-        animals[index].Add(CreateAnimal(index, index * xGap, newY + yGap));
+        var newY = 2 + GetAnimal(index, animalsList[index].Count - 1).transform.position.y;
+        animalsList[index].Add(CreateAnimal(index, index * xGap, newY + yGap));
     }
     #endregion Methods
 }
