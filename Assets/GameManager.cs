@@ -50,8 +50,8 @@ public class GameManager : MonoBehaviour
             while (IsMoving() == false)
             {
                 toDestroyAnimals.Clear();
-                IsMatchedVertical();
-                IsMatchedHorizon();
+                IsMatchedVertical(MatchMode.CheckAndDestroy);
+                IsMatchedHorizon(MatchMode.CheckAndDestroy);
                 DestroyAnimals();
 
 
@@ -90,15 +90,12 @@ public class GameManager : MonoBehaviour
                     {
                         m_isSwipping = true;
                         SwipAnimals(touchedAnimal, hit.transform);
+                        bool isRePosition = IsMatchedVertical(MatchMode.Check) == true || IsMatchedHorizon(MatchMode.Check) == true;
+                        if (isRePosition == false)
+                            SwipAnimals(touchedAnimal, hit.transform);
 
-                        touchedAnimal.DOMove(hit.transform.position, 0.5f)
-                                     .SetEase(Ease.OutBounce)
-                                     .SetLink(touchedAnimal.gameObject)
-                                     .OnComplete(() => m_isSwipping = false);
-                        hit.transform.DOMove(touchedAnimal.position, 0.5f)
-                                     .SetEase(Ease.OutBounce)
-                                     .SetLink(hit.transform.gameObject)
-                                     .OnComplete(() => m_isSwipping = false);
+                        MovePosition(touchedAnimal, hit.transform, isRePosition);
+                        MovePosition(hit.transform, touchedAnimal, isRePosition);
                     }
                     ClearTouchInfo();
                 }
@@ -110,7 +107,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void IsMatchedVertical()
+    void MovePosition(Transform _transform, Transform target, bool isMatched)
+    {
+        _transform.DOMove(target.position, 0.5f)
+                  .SetLoops(isMatched == true ? 1 : 2, LoopType.Yoyo)
+                  .SetEase(Ease.OutBounce)
+                  .SetLink(_transform.gameObject)
+                  .OnComplete(() => m_isSwipping = false);
+    }
+
+    enum MatchMode
+    {
+        Check,
+        CheckAndDestroy,
+    }
+    bool IsMatchedVertical(MatchMode matchmode)
     {
         Animal first, second, third;
         for (int x = 0; x < column; x++)
@@ -122,11 +133,22 @@ public class GameManager : MonoBehaviour
                 third = GetAnimal(x, y + 2);
 
                 if (first.name == second.name && second.name == third.name)
-                    AddtoDestroyAnimals(first, second, third);
+                {
+                    switch (matchmode)
+                    {
+                        case MatchMode.Check:
+                            return true;
+                        case MatchMode.CheckAndDestroy:
+                            AddtoDestroyAnimals(first, second, third);
+                            break;
+                    }
+                }
             }
         }
+
+        return false;
     }
-    void IsMatchedHorizon()
+    bool IsMatchedHorizon(MatchMode matchmode)
     {
         Animal first, second, third;
         for (int x = 0; x < column - 2; x++)
@@ -138,9 +160,19 @@ public class GameManager : MonoBehaviour
                 third = GetAnimal(x + 2, y);
 
                 if (first.name == second.name && second.name == third.name)
-                    AddtoDestroyAnimals(first, second, third);
+                {
+                    switch (matchmode)
+                    {
+                        case MatchMode.Check:
+                            return true;
+                        case MatchMode.CheckAndDestroy:
+                            AddtoDestroyAnimals(first, second, third);
+                            break;
+                    }
+                }
             }
         }
+        return false;
     }
     void DestroyAnimals()
     {
