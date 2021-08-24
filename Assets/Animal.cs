@@ -63,10 +63,16 @@ public class Animal : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (GameManager.instance.PlayMode == PlayModeType.None)
+            return;
+
         GameManager.instance.pressedAnimal = transform;
     }
     private void OnMouseOver()
     {
+        if (GameManager.instance.PlayMode == PlayModeType.None)
+            return;
+
         if (Input.GetMouseButtonUp(0))
             GameManager.instance.releasedAnimal = transform;
     }

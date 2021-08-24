@@ -4,18 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+public enum PlayModeType
+{
+    None,
+    TouchAndTouch,
+    Drag,
+}
 public class GameManager : MonoBehaviour
 {
-    public enum PlayModeType
-    {
-        None,
-        TouchAndTouch,
-        Drag,
-    }
     PlayModeType playMode;
     public PlayModeType PlayMode
     {
+        get => playMode;
         set => playMode = value;
     }
 
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
     bool isMoveable = false;
     IEnumerator Start()
     {
-        while (playMode == PlayModeType.None)
+        while (PlayMode == PlayModeType.None)
             yield return null;
 
         animalParent = GameObject.Find("AnimalParent").transform;
@@ -79,19 +79,35 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
-    private void Update()
+    void Update()
     {
         TouchAndMove();
+        ESCMenu();
+    }
+
+    void ESCMenu()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ClearTouchInfo();
+            if (SelectPlayModeUI.instance.gameObject.activeSelf == false)
+                SelectPlayModeUI.instance.ShowUI();
+            else
+                SelectPlayModeUI.instance.CloseUI();
+        }
     }
 
     bool firstTouch = true;
     GameObject touchedEffect;
     void TouchAndMove()
     {
+        if (PlayMode == PlayModeType.None)
+            return;
+
         if (isMoveable == false)
             return;
 
-        switch (playMode)
+        switch (PlayMode)
         {
             case PlayModeType.TouchAndTouch:
                 // Touch and Touch
