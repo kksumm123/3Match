@@ -202,6 +202,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion TouchAndMove
 
+    #region ESCMenu
     bool firstPlay;
     void ESCMenu()
     {
@@ -216,6 +217,7 @@ public class GameManager : MonoBehaviour
                 SelectPlayModeUI.instance.CloseUI();
         }
     }
+    #endregion ESCMenu
 
     #region Methods
     [SerializeField] float tweenMoveTime = 0.3f;
