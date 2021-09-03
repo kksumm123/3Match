@@ -69,7 +69,6 @@ public class GameManager : MonoBehaviour
         {
             while (IsMoving() == false)
             {
-                ClearTouchInfo();
                 IsMatchedVertical(MatchMode.CheckAndDestroy);
                 IsMatchedHorizon(MatchMode.CheckAndDestroy);
                 DestroyAnimals();
@@ -127,6 +126,7 @@ public class GameManager : MonoBehaviour
             {
                 if (touchedAnimal == null)
                 {
+                    ClearTouchInfo();
                     touchedAnimal = hit.transform;
                     touchedEffect = Instantiate(touchEffectGo, touchedAnimal.position, Quaternion.identity);
                 }
