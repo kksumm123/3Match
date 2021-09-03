@@ -70,7 +70,6 @@ public class GameManager : MonoBehaviour
             while (IsMoving() == false)
             {
                 ClearTouchInfo();
-                toDestroyAnimals.Clear();
                 IsMatchedVertical(MatchMode.CheckAndDestroy);
                 IsMatchedHorizon(MatchMode.CheckAndDestroy);
                 DestroyAnimals();
@@ -278,7 +277,9 @@ public class GameManager : MonoBehaviour
     }
     void DestroyAnimals()
     {
+        ScoreUI.Instance.AddScore(toDestroyAnimals.Count);
         toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
+        toDestroyAnimals.Clear();
     }
     private void ClearTouchInfo()
     {
