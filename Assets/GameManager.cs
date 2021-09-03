@@ -277,9 +277,13 @@ public class GameManager : MonoBehaviour
     }
     void DestroyAnimals()
     {
-        ScoreUI.Instance.AddScore(toDestroyAnimals.Count);
-        toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
-        toDestroyAnimals.Clear();
+        if (toDestroyAnimals.Count > 0)
+        {
+            SoundManager.Instance.PlaySFX();
+            ScoreUI.Instance.AddScore(toDestroyAnimals.Count);
+            toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
+            toDestroyAnimals.Clear();
+        }
     }
     private void ClearTouchInfo()
     {
