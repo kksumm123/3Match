@@ -88,21 +88,8 @@ public class GameManager : MonoBehaviour
         TouchAndMove();
         ESCMenu();
     }
-    bool firstPlay;
-    void ESCMenu()
-    {
-        if (firstPlay == true)
-            return;
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ClearTouchInfo();
-            if (SelectPlayModeUI.instance.gameObject.activeSelf == false)
-                SelectPlayModeUI.instance.ShowUI();
-            else
-                SelectPlayModeUI.instance.CloseUI();
-        }
-    }
 
+    #region TouchAndMove
     bool firstTouch = true;
     GameObject touchedEffect;
     void TouchAndMove()
@@ -203,7 +190,24 @@ public class GameManager : MonoBehaviour
         else
             ClearTouchInfo();
     }
+    #endregion TouchAndMove
 
+    bool firstPlay;
+    void ESCMenu()
+    {
+        if (firstPlay == true)
+            return;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ClearTouchInfo();
+            if (SelectPlayModeUI.instance.gameObject.activeSelf == false)
+                SelectPlayModeUI.instance.ShowUI();
+            else
+                SelectPlayModeUI.instance.CloseUI();
+        }
+    }
+
+    #region Methods
     [SerializeField] float tweenMoveTime = 0.3f;
     void MovePosition(Transform _transform, Transform target, bool isMatched)
     {
@@ -276,8 +280,6 @@ public class GameManager : MonoBehaviour
     {
         toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
     }
-
-    #region Methods
     private void ClearTouchInfo()
     {
         firstTouch = true;
