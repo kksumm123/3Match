@@ -12,6 +12,8 @@ public class SelectPlayModeUI : MonoBehaviour
     Slider sliderSFX;
     void Start()
     {
+        GameState = GameStateType.Menu;
+
         transform.Find("ButtonTouch").GetComponent<Button>()
                  .onClick.AddListener(() =>
                  {
@@ -42,21 +44,51 @@ public class SelectPlayModeUI : MonoBehaviour
         SoundManager.Instance.GSFXVolume = sliderSFX.value;
     }
 
-    public void CloseUI()
-    {
-        if (GameManager.instance.PlayMode == PlayModeType.None)
-            GameManager.instance.PlayMode = originPlayMode;
-        Time.timeScale = 1;
-        gameObject.SetActive(false);
-        SoundManager.Instance.PlayBGM_InGame();
-    }
     PlayModeType originPlayMode;
     public void ShowUI()
     {
         originPlayMode = GameManager.instance.PlayMode;
         GameManager.instance.PlayMode = PlayModeType.None;
-        Time.timeScale = 0;
+        GameState = GameStateType.Menu;
         gameObject.SetActive(true);
         SoundManager.Instance.PlayBGM_Menu();
     }
+    public void CloseUI()
+    {
+        if (GameManager.instance.PlayMode == PlayModeType.None)
+            GameManager.instance.PlayMode = originPlayMode;
+        GameState = GameStateType.Play;
+        gameObject.SetActive(false);
+        SoundManager.Instance.PlayBGM_InGame();
+    }
+
+    GameStateType m_gameState = GameStateType.None;
+
+    public GameStateType GameState
+    {
+        get => m_gameState;
+        set
+        {
+            if (m_gameState == value)
+                return;
+
+            switch (value)
+            {
+                case GameStateType.Menu:
+                    Time.timeScale = 0;
+                    break;
+                case GameStateType.Play:
+                    Time.timeScale = 1;
+                    break;
+            }
+            print($"{m_gameState} -> {value}, TimeScale : {Time.timeScale}");
+            m_gameState = value;
+        }
+    }
+}
+public enum GameStateType
+{
+    None,
+    Menu,
+    Play,
 }
