@@ -20,6 +20,7 @@ public class ImageAnimation : MonoBehaviour
                 image.sprite = sprites[Random.Range(0, sprites.Count)];
                 yield return new WaitForSeconds(delay);
             }
+            yield return null;
         }
     }
 }
