@@ -12,6 +12,9 @@ public enum PlayModeType
 }
 public class GameManager : MonoBehaviour
 {
+    float remainTime;
+    float maxRemaineTime = 30;
+
     PlayModeType playMode;
     public PlayModeType PlayMode
     {
@@ -23,6 +26,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+        remainTime = maxRemaineTime;
     }
 
     Transform animalParent;
@@ -85,6 +89,13 @@ public class GameManager : MonoBehaviour
     {
         TouchAndMove();
         ESCMenu();
+        Timer();
+    }
+
+    void Timer()
+    {
+        remainTime = maxRemaineTime - Time.time;
+        TimerUI.Instance.SetTimer(remainTime, maxRemaineTime);
     }
 
     #region TouchAndMove
