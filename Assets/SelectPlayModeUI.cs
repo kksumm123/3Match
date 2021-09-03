@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SelectPlayModeUI : MonoBehaviour
 {
     public static SelectPlayModeUI instance;
+   
     void Awake()
     {
         instance = this;

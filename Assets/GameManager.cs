@@ -45,8 +45,11 @@ public class GameManager : MonoBehaviour
     bool isMoveable = false;
     IEnumerator Start()
     {
+        firstPlay = true;
+
         while (PlayMode == PlayModeType.None)
             yield return null;
+        firstPlay = false;
 
         animalParent = GameObject.Find("AnimalParent").transform;
         animalGo = (GameObject)Resources.Load(animalGoString);
@@ -84,9 +87,11 @@ public class GameManager : MonoBehaviour
         TouchAndMove();
         ESCMenu();
     }
-
+    bool firstPlay;
     void ESCMenu()
     {
+        if (firstPlay == true)
+            return;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ClearTouchInfo();
