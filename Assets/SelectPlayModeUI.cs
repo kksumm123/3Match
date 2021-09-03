@@ -6,11 +6,10 @@ using UnityEngine.UI;
 public class SelectPlayModeUI : MonoBehaviour
 {
     public static SelectPlayModeUI instance;
-   
-    void Awake()
-    {
-        instance = this;
-    }
+    void Awake() => instance = this;
+
+    Slider sliderBGM;
+    Slider sliderSFX;
     void Start()
     {
         transform.Find("ButtonTouch").GetComponent<Button>()
@@ -25,6 +24,22 @@ public class SelectPlayModeUI : MonoBehaviour
                      GameManager.instance.PlayMode = PlayModeType.Drag;
                      CloseUI();
                  });
+
+        sliderBGM = transform.Find("SliderBGM/Slider").GetComponent<Slider>();
+        sliderSFX = transform.Find("SliderSFX/Slider").GetComponent<Slider>();
+    }
+    void Update()
+    {
+        VolumeBGM();
+        VolumeSFXs();
+    }
+    void VolumeBGM()
+    {
+        SoundManager.Instance.GBGMVolume = sliderBGM.value;
+    }
+    void VolumeSFXs()
+    {
+        SoundManager.Instance.GSFXVolume = sliderSFX.value;
     }
 
     public void CloseUI()
@@ -33,6 +48,7 @@ public class SelectPlayModeUI : MonoBehaviour
             GameManager.instance.PlayMode = originPlayMode;
         Time.timeScale = 1;
         gameObject.SetActive(false);
+        SoundManager.Instance.PlayBGM_InGame();
     }
     PlayModeType originPlayMode;
     public void ShowUI()
@@ -41,5 +57,6 @@ public class SelectPlayModeUI : MonoBehaviour
         GameManager.instance.PlayMode = PlayModeType.None;
         Time.timeScale = 0;
         gameObject.SetActive(true);
+        SoundManager.Instance.PlayBGM_Menu();
     }
 }
