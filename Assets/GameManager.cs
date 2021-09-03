@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 {
     float remainTime;
     float maxRemaineTime = 30;
+    float remainTimeAddValue = 2;
 
     PlayModeType playMode;
     public PlayModeType PlayMode
@@ -92,9 +93,10 @@ public class GameManager : MonoBehaviour
         Timer();
     }
 
+    float addedTime;
     void Timer()
     {
-        remainTime = maxRemaineTime - Time.time;
+        remainTime = Mathf.Min(maxRemaineTime - Time.time + addedTime, maxRemaineTime);
         TimerUI.Instance.SetTimer(remainTime, maxRemaineTime);
     }
 
@@ -290,10 +292,12 @@ public class GameManager : MonoBehaviour
     }
     void DestroyAnimals()
     {
-        if (toDestroyAnimals.Count > 0)
+        var count = toDestroyAnimals.Count;
+        if (count > 0)
         {
+            addedTime = count * remainTimeAddValue;
             SoundManager.Instance.PlaySFX();
-            ScoreUI.Instance.AddScore(toDestroyAnimals.Count);
+            ScoreUI.Instance.AddScore(count);
             toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
             toDestroyAnimals.Clear();
         }
