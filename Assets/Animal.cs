@@ -36,6 +36,14 @@ public class Animal : MonoBehaviour
             return;
         CheckMoving();
         CheckSwipping();
+        CheckUPForce();
+    }
+
+    void CheckUPForce()
+    {
+        // velocity가 0보다 크면 0으로 초기화
+        if (rigid.velocity.y > 0)
+            rigid.Sleep();
     }
 
     void CheckMoving()

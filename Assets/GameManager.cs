@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
         {
             while (IsMoving() == false)
             {
+                ClearTouchInfo();
                 toDestroyAnimals.Clear();
                 IsMatchedVertical(MatchMode.CheckAndDestroy);
                 IsMatchedHorizon(MatchMode.CheckAndDestroy);
@@ -76,7 +77,7 @@ public class GameManager : MonoBehaviour
 
                 isMoveable = true;
                 // Wait 1f, cuz DestroyAnimation Lengh = 0.5f
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(1);
                 isMoveable = false;
             }
             yield return null;
