@@ -11,6 +11,7 @@ public class ScoreUI : MonoBehaviour
     void Awake() => Instance = this;
 
     int score;
+    public int Score => score;
     Text value;
     void Start()
     {
@@ -21,11 +22,12 @@ public class ScoreUI : MonoBehaviour
 
     float scoreAnimTime = 0.3f;
     int scoreValue = 10;
+
     internal void AddScore(int count)
     {
         int oldScore = score;
         score += scoreValue * count;
         DOTween.To(() => oldScore, (x) => value.text = x.ToString()
-                    , score, scoreAnimTime).SetLink(gameObject);
+                    , score, scoreAnimTime).SetLink(gameObject).SetUpdate(true);
     }
 }

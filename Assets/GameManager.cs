@@ -99,6 +99,12 @@ public class GameManager : MonoBehaviour
         remainTime = Mathf.Min(remainTime - Time.deltaTime + addedTime, maxRemaineTime);
         addedTime = 0;
         TimerUI.Instance.SetTimer(remainTime, maxRemaineTime);
+
+        if (remainTime < 0)
+        {
+            GameOverUI.Instance.ShowUI();
+            enabled = false;
+        }
     }
 
     #region TouchAndMove
@@ -296,6 +302,7 @@ public class GameManager : MonoBehaviour
         var count = toDestroyAnimals.Count;
         if (count > 0)
         {
+            ClearTouchInfo();
             addedTime = count * remainTimeAddValue;
             SoundManager.Instance.PlaySFX();
             ScoreUI.Instance.AddScore(count);
