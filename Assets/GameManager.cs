@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 {
     float remainTime;
     float maxRemaineTime = 30;
-    float remainTimeAddValue = 2;
+    float remainTimeAddValue = 0.5f;
 
     PlayModeType playMode;
     public PlayModeType PlayMode
@@ -96,7 +96,8 @@ public class GameManager : MonoBehaviour
     float addedTime;
     void Timer()
     {
-        remainTime = Mathf.Min(maxRemaineTime - Time.time + addedTime, maxRemaineTime);
+        remainTime = Mathf.Min(remainTime - Time.deltaTime + addedTime, maxRemaineTime);
+        addedTime = 0;
         TimerUI.Instance.SetTimer(remainTime, maxRemaineTime);
     }
 
