@@ -42,5 +42,12 @@ public class ScoreUI : MonoBehaviour
         score += scoreValue * count;
         DOTween.To(() => oldScore, (x) => value.text = x.ToString()
                     , score, scoreAnimTime).SetLink(gameObject).SetUpdate(true);
+        if (score > highScore)
+        {
+            int oldHighScore = highScore;
+            highScore = score;
+            DOTween.To(() => oldHighScore, (x) => highScoreValue.text = x.ToString()
+                    , highScore, scoreAnimTime).SetLink(gameObject).SetUpdate(true);
+        }
     }
 }
