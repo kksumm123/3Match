@@ -11,9 +11,12 @@ public class GameOverUI : MonoBehaviour
     void Awake() => Instance = this;
 
     Text yourScoreValue;
+    Text highScoreValue;
+
     void Start()
     {
         yourScoreValue = transform.Find("YourScoreValue").GetComponent<Text>();
+        highScoreValue = transform.Find("HighScoreValue").GetComponent<Text>();
         gameObject.SetActive(false);
     }
 
@@ -30,10 +33,13 @@ public class GameOverUI : MonoBehaviour
     public void ShowUI()
     {
         int score = ScoreUI.Instance.Score;
+        highScoreValue.text = ScoreUI.Instance.HighScore.ToString();
+
         GameManager.instance.PlayMode = PlayModeType.None;
         SelectPlayModeUI.instance.GameState = GameStateType.Menu;
-        gameObject.SetActive(true);
         SoundManager.Instance.PlayBGM_Menu();
+        gameObject.SetActive(true);
+
         DOTween.To(() => 0, (x) => yourScoreValue.text = x.ToString()
                     , score, scoreAnimTime).SetLink(gameObject).SetUpdate(true);
     }
