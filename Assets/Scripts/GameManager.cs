@@ -13,7 +13,7 @@ public enum PlayModeType
 public class GameManager : MonoBehaviour
 {
     float remainTime;
-    float maxRemaineTime = 30;
+    float maxRemaineTime = 15;
     float remainTimeAddValue = 0.5f;
 
     PlayModeType playMode;
