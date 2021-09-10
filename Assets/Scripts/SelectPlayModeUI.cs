@@ -26,6 +26,11 @@ public class SelectPlayModeUI : MonoBehaviour
                      GameManager.instance.PlayMode = PlayModeType.Drag;
                      CloseUI();
                  });
+        transform.Find("ButtonGameExit").GetComponent<Button>()
+                 .onClick.AddListener(() =>
+                 {
+                     Application.Quit();
+                 });
 
         sliderBGM = transform.Find("SliderBGM/Slider").GetComponent<Slider>();
         sliderSFX = transform.Find("SliderSFX/Slider").GetComponent<Slider>();
