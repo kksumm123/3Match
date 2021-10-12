@@ -3502,7 +3502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 383ef22d08bd8314fa38d39d9d18d517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxRemaineTime: 1
+  maxRemaineTime: 15
   remainTimeAddValue: 0.5
   pressedAnimal: {fileID: 0}
   releasedAnimal: {fileID: 0}
