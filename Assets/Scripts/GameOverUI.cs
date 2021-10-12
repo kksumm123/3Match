@@ -24,9 +24,15 @@ public class GameOverUI : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            gameObject.SetActive(false);
-            SceneManager.LoadScene(0);
+            enabled = false;
+            AdsManager.Instance.ShowAds();
         }
+    }
+
+    public void ReloadScene()
+    {
+        gameObject.SetActive(false);
+        SceneManager.LoadScene(0);
     }
 
     float scoreAnimTime = 1f;

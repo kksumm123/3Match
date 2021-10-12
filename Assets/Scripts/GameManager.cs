@@ -13,8 +13,8 @@ public enum PlayModeType
 public class GameManager : MonoBehaviour
 {
     float remainTime;
-    float maxRemaineTime = 15;
-    float remainTimeAddValue = 0.5f;
+    [SerializeField] float maxRemaineTime = 15;
+    [SerializeField] float remainTimeAddValue = 0.5f;
 
     PlayModeType playMode;
     public PlayModeType PlayMode

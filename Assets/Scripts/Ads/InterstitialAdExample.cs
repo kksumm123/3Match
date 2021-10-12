@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Advertisements;
 
@@ -53,7 +54,11 @@ public class InterstitialAdExample : MonoBehaviour, IUnityAdsLoadListener, IUnit
 
     public void OnUnityAdsShowStart(string adUnitId) { Debug.Log("OnUnityAdsShowStart:" + adUnitId); }
     public void OnUnityAdsShowClick(string adUnitId){ Debug.Log("OnUnityAdsShowClick" + adUnitId);}
+
+    public Action<UnityAdsShowCompletionState> onUnityAdsShowComplete;
     public void OnUnityAdsShowComplete(string adUnitId, UnityAdsShowCompletionState showCompletionState) {
         Debug.Log($"adUnitId:{adUnitId}, showCompletionState:{showCompletionState}");
+
+        onUnityAdsShowComplete?.Invoke(showCompletionState);
     }
 }
