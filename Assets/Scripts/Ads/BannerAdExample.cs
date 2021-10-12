@@ -4,11 +4,6 @@ using UnityEngine.Advertisements;
 
 public class BannerAdExample : MonoBehaviour
 {
-    // For the purpose of this example, these buttons are for functionality testing:
-   public Button _loadBannerButton;
-   public Button _showBannerButton;
-   public Button _hideBannerButton;
-
     [SerializeField] BannerPosition _bannerPosition = BannerPosition.BOTTOM_CENTER;
 
     [SerializeField] string _androidAdUnitId = "Banner_Android";
