@@ -20,12 +20,21 @@ public class GameOverUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    bool isShowAds = false;
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            enabled = false;
-            AdsManager.Instance.ShowAds();
+            if (isShowAds)
+            {
+                enabled = false;
+                ReloadScene();
+            }
+            else
+            {
+                isShowAds = true;
+                AdsManager.Instance.ShowAds();
+            }
         }
     }
 
