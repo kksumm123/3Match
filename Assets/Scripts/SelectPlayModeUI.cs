@@ -10,6 +10,9 @@ public class SelectPlayModeUI : MonoBehaviour
 
     Slider sliderBGM;
     Slider sliderSFX;
+    string sliderBGMKey = "SliderBGM";
+    string sliderSFXKey = "SliderSFX";
+
     void Start()
     {
         GameState = GameStateType.Menu;
@@ -34,11 +37,20 @@ public class SelectPlayModeUI : MonoBehaviour
 
         sliderBGM = transform.Find("SliderBGM/Slider").GetComponent<Slider>();
         sliderSFX = transform.Find("SliderSFX/Slider").GetComponent<Slider>();
+        if (PlayerPrefs.HasKey(sliderBGMKey))
+            sliderBGM.value = PlayerPrefs.GetFloat(sliderBGMKey);
+        if (PlayerPrefs.HasKey(sliderSFXKey))
+            sliderSFX.value = PlayerPrefs.GetFloat(sliderSFXKey);
     }
     void Update()
     {
         VolumeBGM();
         VolumeSFXs();
+    }
+    void OnDestroy()
+    {
+        PlayerPrefs.SetFloat(sliderBGMKey, sliderBGM.value);
+        PlayerPrefs.SetFloat(sliderSFXKey, sliderSFX.value);
     }
     void VolumeBGM()
     {
