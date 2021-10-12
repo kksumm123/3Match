@@ -10,13 +10,19 @@ public class AdsManager : MonoBehaviour
 
     InterstitialAdExample interstitialAdExample;
     BannerAdExample bannerAdExample;
-    void Start()
+    IEnumerator Start()
     {
         interstitialAdExample = GetComponent<InterstitialAdExample>();
         bannerAdExample = GetComponent<BannerAdExample>();
 
+        while (!Advertisement.isInitialized)
+            yield return null;
+
         interstitialAdExample.LoadAd();
         bannerAdExample.LoadBanner();
+
+        //while (!Advertisement.Banner.isLoaded)
+        //    yield return null;
         bannerAdExample.ShowBannerAd();
 
         interstitialAdExample.onUnityAdsShowComplete = (unityAdsShowCompletionState) =>

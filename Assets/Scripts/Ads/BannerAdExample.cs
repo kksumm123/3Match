@@ -17,21 +17,18 @@ public class BannerAdExample : MonoBehaviour
 
     void Start()
     {
-        // Disable the button until an ad is ready to show:
-        //_showBannerButton.interactable = false;
-        //_hideBannerButton.interactable = false;
-
-        // Set the banner position:
+        //_adUnitId 선언만 하고 할당해주는 코드가 없었다 !
+        // Get the Ad Unit ID for the current platform:
+        _adUnitId = (Application.platform == RuntimePlatform.IPhonePlayer)
+            ? _iOsAdUnitId
+            : _androidAdUnitId;
         Advertisement.Banner.SetPosition(_bannerPosition);
-
-        // Configure the Load Banner button to call the LoadBanner() method when clicked:
-        //_loadBannerButton.onClick.AddListener(LoadBanner);
-        //_loadBannerButton.interactable = true;
     }
 
     // Implement a method to call when the Load Banner button is clicked:
     public void LoadBanner()
     {
+        Debug.Log("배너 광고 옵션 설정");
         // Set up options to notify the SDK of load events:
         BannerLoadOptions options = new BannerLoadOptions
         {
@@ -39,25 +36,17 @@ public class BannerAdExample : MonoBehaviour
             errorCallback = OnBannerError
         };
 
+        Debug.Log($"배너 광고 로드 _adUnitId : {_adUnitId}\noptions : {options}");
         // Load the Ad Unit with banner content:
         Advertisement.Banner.Load(_adUnitId, options);
+        Debug.Log("배너 광고 로드 명령어 실행");
     }
 
-    // Implement code to execute when the loadCallback event triggers:
     void OnBannerLoaded()
     {
         Debug.Log("Banner loaded");
-        // Configure the Show Banner button to call the ShowBannerAd() method when clicked:
-        //_showBannerButton.onClick.AddListener(ShowBannerAd);
-        // Configure the Hide Banner button to call the HideBannerAd() method when clicked:
-        //_hideBannerButton.onClick.AddListener(HideBannerAd);
-
-        // Enable both buttons:
-        //_showBannerButton.interactable = true;
-        //_hideBannerButton.interactable = true;
     }
 
-    // Implement code to execute when the load errorCallback event triggers:
     void OnBannerError(string message)
     {
         Debug.Log($"Banner Error: {message}");
@@ -67,6 +56,7 @@ public class BannerAdExample : MonoBehaviour
     // Implement a method to call when the Show Banner button is clicked:
     public void ShowBannerAd()
     {
+        Debug.Log("ShowBannerAd() 실행");
         // Set up options to notify the SDK of show events:
         BannerOptions options = new BannerOptions
         {
@@ -77,6 +67,7 @@ public class BannerAdExample : MonoBehaviour
 
         // Show the loaded Banner Ad Unit:
         Advertisement.Banner.Show(_adUnitId, options);
+        Debug.Log("Advertisement.Banner.Show 명령어 실행");
     }
 
     // Implement a method to call when the Hide Banner button is clicked:
@@ -86,15 +77,12 @@ public class BannerAdExample : MonoBehaviour
         Advertisement.Banner.Hide();
     }
 
-    void OnBannerClicked() { }
-    void OnBannerShown() { }
-    void OnBannerHidden() { }
+    void OnBannerClicked() => Debug.Log("배너 클릭함");
+    void OnBannerShown() => Debug.Log("배너 보여줬음");
+    void OnBannerHidden() => Debug.Log("배너 숨김");
 
     void OnDestroy()
     {
         // Clean up the listeners:
-        //_loadBannerButton.onClick.RemoveAllListeners();
-        //_showBannerButton.onClick.RemoveAllListeners();
-        //_hideBannerButton.onClick.RemoveAllListeners();
     }
 }
