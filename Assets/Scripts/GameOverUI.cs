@@ -21,19 +21,23 @@ public class GameOverUI : MonoBehaviour
     }
 
     bool isShowAds = false;
+    float restartableTime;
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (restartableTime > Time.realtimeSinceStartup)
+                return;
+
+            isShowAds = true;
+            if (Random.Range(0, 1f) < 0.6f)
+            {
+                AdsManager.Instance.ShowAds();
+            }
             if (isShowAds)
             {
                 enabled = false;
                 ReloadScene();
-            }
-            else
-            {
-                isShowAds = true;
-                AdsManager.Instance.ShowAds();
             }
         }
     }
@@ -47,6 +51,8 @@ public class GameOverUI : MonoBehaviour
     float scoreAnimTime = 1f;
     public void ShowUI()
     {
+        restartableTime = Time.realtimeSinceStartup + 1.5f;
+
         int score = ScoreUI.Instance.Score;
         highScoreValue.text = ScoreUI.Instance.HighScore.ToString();
 
