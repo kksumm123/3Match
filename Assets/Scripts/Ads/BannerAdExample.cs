@@ -12,6 +12,8 @@ public class BannerAdExample : MonoBehaviour
 
     void Start()
     {
+        _androidAdUnitId = "Banner_Android";
+        _iOsAdUnitId = "Banner_iOS";
         //_adUnitId 선언만 하고 할당해주는 코드가 없었다 !
         // Get the Ad Unit ID for the current platform:
         _adUnitId = (Application.platform == RuntimePlatform.IPhonePlayer)

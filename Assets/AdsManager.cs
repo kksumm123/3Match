@@ -12,6 +12,8 @@ public class AdsManager : MonoBehaviour
     BannerAdExample bannerAdExample;
     IEnumerator Start()
     {
+        yield return null; // 광고.cs에서 start() 실행할 수 있도록 1프레임 return
+
         interstitialAdExample = GetComponent<InterstitialAdExample>();
         bannerAdExample = GetComponent<BannerAdExample>();
 
