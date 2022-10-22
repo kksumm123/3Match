@@ -13,6 +13,7 @@ public enum PlayModeType
 public class GameManager : Singleton<GameManager>
 {
     [SerializeField] TimerSystem timerSystem = new TimerSystem();
+    ESCMenuSystem escMenuSystem = new ESCMenuSystem();
 
     PlayModeType playMode;
     public PlayModeType PlayMode
@@ -23,7 +24,8 @@ public class GameManager : Singleton<GameManager>
 
     void Awake()
     {
-        timerSystem.InitializeOnAwake();
+        timerSystem.InitializeOnAwake(this, OnGameOver);
+        escMenuSystem.Initialize(OnESCMenu: ClearTouchInfo);
     }
 
     Transform animalParent;
@@ -46,25 +48,10 @@ public class GameManager : Singleton<GameManager>
     bool isMoveable = false;
     IEnumerator Start()
     {
-        firstPlay = true;
-
-        while (PlayMode == PlayModeType.None)
-            yield return null;
-        firstPlay = false;
-
-        animalParent = GameObject.Find("AnimalParent").transform;
-        animalGo = (GameObject)Resources.Load(animalGoString);
-        touchEffectGo = (GameObject)Resources.Load(touchEffectString);
-        animalLayer = 1 << LayerMask.NameToLayer("Animal");
-
-        animalScaleX = animalGo.transform.localScale.x;
-        var animalColSize = animalGo.GetComponent<BoxCollider>().size;
-        xGap = animalColSize.x * animalScaleX + 0.01f;
-        yGap = animalColSize.y + 0.01f;
-        GenerateAnimals();
-
-        isPlaying = true;
-        isMoveable = true;
+        escMenuSystem.OnWaitSelectPlayMode();
+        yield return new WaitUntil(() => IsSelectPlayMode());
+        escMenuSystem.OnPlayGame();
+        OnStartPlayGame();
         yield return new WaitForSeconds(1);
         while (isPlaying)
         {
@@ -82,11 +69,38 @@ public class GameManager : Singleton<GameManager>
             yield return null;
         }
     }
+
+    private void OnStartPlayGame()
+    {
+        animalParent = GameObject.Find("AnimalParent").transform;
+        animalGo = (GameObject)Resources.Load(animalGoString);
+        touchEffectGo = (GameObject)Resources.Load(touchEffectString);
+        animalLayer = 1 << LayerMask.NameToLayer("Animal");
+
+        animalScaleX = animalGo.transform.localScale.x;
+        var animalColSize = animalGo.GetComponent<BoxCollider>().size;
+        xGap = animalColSize.x * animalScaleX + 0.01f;
+        yGap = animalColSize.y + 0.01f;
+        GenerateAnimals();
+
+        isPlaying = true;
+        isMoveable = true;
+        timerSystem.StartTimer();
+    }
+
+    private bool IsSelectPlayMode()
+    {
+        return playMode != PlayModeType.None;
+    }
+
     void Update()
     {
         TouchAndMove();
-        ESCMenu();
-        //Timer();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            escMenuSystem.ESCMenu();
+        }
     }
 
     void OnGameOver()
@@ -199,20 +213,6 @@ public class GameManager : Singleton<GameManager>
     #endregion TouchAndMove
 
     #region ESCMenu
-    bool firstPlay;
-    void ESCMenu()
-    {
-        if (firstPlay == true)
-            return;
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ClearTouchInfo();
-            if (SelectPlayModeUI.Instance.gameObject.activeSelf == false)
-                SelectPlayModeUI.Instance.ShowUI();
-            else
-                SelectPlayModeUI.Instance.CloseUI();
-        }
-    }
     #endregion ESCMenu
 
     #region Methods

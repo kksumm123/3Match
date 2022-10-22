@@ -6,28 +6,43 @@ using UnityEngine;
 [System.Serializable]
 public class TimerSystem
 {
-    float remainTime;
-    float addedTime;
-
-    [SerializeField] float maxRemaineTime = 15;
-    [SerializeField] float remainTimeAddValue = 0.5f;
+    MonoBehaviour owner;
     Action onGameOver;
 
-    public void InitializeOnAwake()
+    float remainTime;
+    float addedTime;
+    [SerializeField] float maxRemaineTime = 15;
+    [SerializeField] float remainTimeAddValue = 0.5f;
+
+    Coroutine timerCoHandle;
+
+    public void InitializeOnAwake(MonoBehaviour owner, Action onGameOver)
     {
+        this.owner = owner;
+        this.onGameOver = onGameOver;
         remainTime = maxRemaineTime;
     }
 
-    void Timer()
+    public void StartTimer()
     {
-        remainTime = Mathf.Min(remainTime - Time.deltaTime + addedTime, maxRemaineTime);
-        addedTime = 0;
-        TimerUI.Instance.SetTimer(remainTime, maxRemaineTime);
+        timerCoHandle = WoonyMethods.StopAndStartCo(owner, timerCoHandle, TimerCo());
+    }
 
-        if (remainTime < 0)
+    IEnumerator TimerCo()
+    {
+        var isTrue = true;
+        while (isTrue)
         {
-            GameOverUI.Instance.ShowUI();
-            onGameOver?.Invoke();
+            remainTime = Mathf.Min(remainTime - Time.deltaTime + addedTime, maxRemaineTime);
+            addedTime = 0;
+            TimerUI.Instance.SetTimer(remainTime, maxRemaineTime);
+
+            if (remainTime < 0)
+            {
+                GameOverUI.Instance.ShowUI();
+                onGameOver?.Invoke();
+            }
+            yield return null;
         }
     }
 
