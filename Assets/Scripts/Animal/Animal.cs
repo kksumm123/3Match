@@ -34,8 +34,8 @@ public class Animal : MonoBehaviour
 
     void Update()
     {
-        if (isAlive == false)
-            return;
+        if (isAlive == false) return;
+
         CheckMoving();
         CheckSwipping();
         CheckUPForce();
@@ -45,20 +45,26 @@ public class Animal : MonoBehaviour
     {
         // velocity가 0보다 크면 0으로 초기화
         if (rigid.velocity.y > 0)
+        {
             rigid.Sleep();
+        }
     }
 
     void CheckMoving()
     {
         if (rigid.velocity.sqrMagnitude > 0.1f)
+        {
             isMoving = true;
+        }
         else
+        {
             isMoving = false;
+        }
     }
 
     void CheckSwipping()
     {
-        rigid.useGravity = !GameManager.Instance.IsSwipping;
+        rigid.useGravity = !GameManager.Instance.IsSwitching;
     }
 
     public void Destroy()
@@ -68,8 +74,10 @@ public class Animal : MonoBehaviour
         IEnumerator Co()
         {
             animator.Play("DestroyEffect");
+
             // Wait 0.4f, cuz DestroyAnimation Lengh = 0.5f
             yield return new WaitForSeconds(0.4f);
+
             GameManager.Instance.OnCompleteDestroyAnimal(gameObject, Index);
             Destroy(gameObject);
         }
@@ -77,18 +85,18 @@ public class Animal : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (GameManager.Instance.PlayMode == PlayModeType.None)
-            return;
+        if (GameManager.Instance.PlayMode == PlayModeType.None) return;
 
-        GameManager.Instance.pressedAnimal = transform;
+        GameManager.Instance.OnMouseDown(transform);
     }
 
     private void OnMouseOver()
     {
-        if (GameManager.Instance.PlayMode == PlayModeType.None)
-            return;
+        if (GameManager.Instance.PlayMode == PlayModeType.None) return;
 
         if (Input.GetMouseButtonUp(0))
-            GameManager.Instance.releasedAnimal = transform;
+        {
+            GameManager.Instance.OnMouseOver(transform);
+        }
     }
 }

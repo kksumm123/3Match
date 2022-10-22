@@ -8,7 +8,7 @@ public class AnimalControlSystem
 {
     public Vector2 AnimalGap => _animalGap;
     public int ToDestroyAnimalCount => toDestroyAnimals.Count;
-    public bool IsSwipping => animalMoveSystem.IsSwipping;
+    public bool IsSwitching => animalMoveSystem.IsSwitching;
 
     Vector2 _animalGap;
     [SerializeField] int row = 10;
@@ -24,8 +24,16 @@ public class AnimalControlSystem
 
     public void Initialize(GameManager gameManager, Action<int> onDestroyAnimal)
     {
-        animalGenerateSystem.Initialize(gameManager, out _animalGap.x, out _animalGap.y, row, column, GetAnimal);
-        matchSystem.Initialize(row, column, GetAnimal, animalDestroySystem.AddtoDestroyAnimals);
+        animalGenerateSystem.Initialize(gameManager,
+                                        out _animalGap.x,
+                                        out _animalGap.y,
+                                        row,
+                                        column,
+                                        GetAnimal);
+        matchSystem.Initialize(row,
+                               column,
+                               GetAnimal,
+                               animalDestroySystem.AddtoDestroyAnimals);
         animalDestroySystem.Initialize(toDestroyAnimals, onDestroyAnimal);
         animalMoveSystem.Initialize(GetAnimal, IsMacthed);
     }
