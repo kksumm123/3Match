@@ -1,4 +1,4 @@
-using DG.Tweening;
+Ôªøusing DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,11 +10,9 @@ public enum PlayModeType
     TouchAndTouch,
     Drag,
 }
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-    float remainTime;
-    [SerializeField] float maxRemaineTime = 15;
-    [SerializeField] float remainTimeAddValue = 0.5f;
+    [SerializeField] TimerSystem timerSystem = new TimerSystem();
 
     PlayModeType playMode;
     public PlayModeType PlayMode
@@ -23,11 +21,9 @@ public class GameManager : MonoBehaviour
         set => playMode = value;
     }
 
-    public static GameManager instance;
     void Awake()
     {
-        instance = this;
-        remainTime = maxRemaineTime;
+        timerSystem.InitializeOnAwake();
     }
 
     Transform animalParent;
@@ -90,21 +86,12 @@ public class GameManager : MonoBehaviour
     {
         TouchAndMove();
         ESCMenu();
-        Timer();
+        //Timer();
     }
 
-    float addedTime;
-    void Timer()
+    void OnGameOver()
     {
-        remainTime = Mathf.Min(remainTime - Time.deltaTime + addedTime, maxRemaineTime);
-        addedTime = 0;
-        TimerUI.Instance.SetTimer(remainTime, maxRemaineTime);
-
-        if (remainTime < 0)
-        {
-            GameOverUI.Instance.ShowUI();
-            enabled = false;
-        }
+        enabled = false;
     }
 
     #region TouchAndMove
@@ -220,10 +207,10 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ClearTouchInfo();
-            if (SelectPlayModeUI.instance.gameObject.activeSelf == false)
-                SelectPlayModeUI.instance.ShowUI();
+            if (SelectPlayModeUI.Instance.gameObject.activeSelf == false)
+                SelectPlayModeUI.Instance.ShowUI();
             else
-                SelectPlayModeUI.instance.CloseUI();
+                SelectPlayModeUI.Instance.CloseUI();
         }
     }
     #endregion ESCMenu
@@ -297,19 +284,21 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
+
     void DestroyAnimals()
     {
         var count = toDestroyAnimals.Count;
         if (count > 0)
         {
             ClearTouchInfo();
-            addedTime = count * remainTimeAddValue;
+            timerSystem.OnDestroyAnimal(count);
             SoundManager.Instance.PlaySFX();
             ScoreUI.Instance.AddScore(count);
             toDestroyAnimals.ForEach((x) => StartCoroutine(x.Destroy()));
             toDestroyAnimals.Clear();
         }
     }
+
     private void ClearTouchInfo()
     {
         firstTouch = true;
@@ -380,7 +369,7 @@ public class GameManager : MonoBehaviour
         if (animalsList.Count > x && animalsList[x].Count > y)
             return animalsList[x][y].GetComponent<Animal>();
 
-        Debug.LogWarning("¿Œµ¶Ω∫ æ¯¿∏∏È ø©±‚∑Œ ø»");
+        Debug.LogWarning("Ïù∏Îç±Ïä§ ÏóÜÏúºÎ©¥ Ïó¨Í∏∞Î°ú Ïò¥");
         return null;
     }
 

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,11 +11,11 @@ public class ImageAnimation : MonoBehaviour
     float delay = 0.1f;
     IEnumerator Start()
     {
-        Debug.Assert(sprites.Count > 0, "¿©±â¿£ ½ºÇÁ¶óÀÌÆ®°¡ ÀÖ¾î¾ßÇØ");
+        Debug.Assert(sprites.Count > 0, "ì—¬ê¸°ì—” ìŠ¤í”„ë¼ì´íŠ¸ê°€ ìˆì–´ì•¼í•´");
         image = GetComponent<Image>();
         while (true)
         {
-            while (SelectPlayModeUI.instance.GameState == GameStateType.Play)
+            while (SelectPlayModeUI.Instance.GameState == GameStateType.Play)
             {
                 image.sprite = sprites[Random.Range(0, sprites.Count)];
                 yield return new WaitForSeconds(delay);

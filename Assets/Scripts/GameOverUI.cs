@@ -1,4 +1,4 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -56,8 +56,8 @@ public class GameOverUI : MonoBehaviour
         int score = ScoreUI.Instance.Score;
         highScoreValue.text = ScoreUI.Instance.HighScore.ToString();
 
-        GameManager.instance.PlayMode = PlayModeType.None;
-        SelectPlayModeUI.instance.GameState = GameStateType.Menu;
+        GameManager.Instance.PlayMode = PlayModeType.None;
+        SelectPlayModeUI.Instance.GameState = GameStateType.Menu;
         SoundManager.Instance.PlayBGM_Menu();
         gameObject.SetActive(true);
 

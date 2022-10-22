@@ -1,13 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SelectPlayModeUI : MonoBehaviour
+public class SelectPlayModeUI : Singleton<SelectPlayModeUI>
 {
-    public static SelectPlayModeUI instance;
-    void Awake() => instance = this;
-
     Slider sliderBGM;
     Slider sliderSFX;
     string sliderBGMKey = "SliderBGM";
@@ -20,13 +17,13 @@ public class SelectPlayModeUI : MonoBehaviour
         transform.Find("ButtonTouch").GetComponent<Button>()
                  .onClick.AddListener(() =>
                  {
-                     GameManager.instance.PlayMode = PlayModeType.TouchAndTouch;
+                     GameManager.Instance.PlayMode = PlayModeType.TouchAndTouch;
                      CloseUI();
                  });
         transform.Find("ButtonDrag").GetComponent<Button>()
                  .onClick.AddListener(() =>
                  {
-                     GameManager.instance.PlayMode = PlayModeType.Drag;
+                     GameManager.Instance.PlayMode = PlayModeType.Drag;
                      CloseUI();
                  });
         transform.Find("ButtonGameExit").GetComponent<Button>()
@@ -64,16 +61,16 @@ public class SelectPlayModeUI : MonoBehaviour
     PlayModeType originPlayMode;
     public void ShowUI()
     {
-        originPlayMode = GameManager.instance.PlayMode;
-        GameManager.instance.PlayMode = PlayModeType.None;
+        originPlayMode = GameManager.Instance.PlayMode;
+        GameManager.Instance.PlayMode = PlayModeType.None;
         GameState = GameStateType.Menu;
         gameObject.SetActive(true);
         SoundManager.Instance.PlayBGM_Menu();
     }
     public void CloseUI()
     {
-        if (GameManager.instance.PlayMode == PlayModeType.None)
-            GameManager.instance.PlayMode = originPlayMode;
+        if (GameManager.Instance.PlayMode == PlayModeType.None)
+            GameManager.Instance.PlayMode = originPlayMode;
         GameState = GameStateType.Play;
         gameObject.SetActive(false);
         SoundManager.Instance.PlayBGM_InGame();

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 public enum AnimalType
@@ -41,7 +41,7 @@ public class Animal : MonoBehaviour
 
     void CheckUPForce()
     {
-        // velocity°¡ 0º¸´Ù Å©¸é 0À¸·Î ÃÊ±âÈ­
+        // velocityê°€ 0ë³´ë‹¤ í¬ë©´ 0ìœ¼ë¡œ ì´ˆê¸°í™”
         if (rigid.velocity.y > 0)
             rigid.Sleep();
     }
@@ -56,7 +56,7 @@ public class Animal : MonoBehaviour
 
     void CheckSwipping()
     {
-        rigid.useGravity = !GameManager.instance.IsSwipping;
+        rigid.useGravity = !GameManager.Instance.IsSwipping;
     }
 
     public IEnumerator Destroy()
@@ -64,24 +64,24 @@ public class Animal : MonoBehaviour
         animator.Play("DestroyEffect");
         // Wait 0.4f, cuz DestroyAnimation Lengh = 0.5f
         yield return new WaitForSeconds(0.4f);
-        GameManager.instance.Remove(gameObject, Index);
-        GameManager.instance.Reborn(Index);
+        GameManager.Instance.Remove(gameObject, Index);
+        GameManager.Instance.Reborn(Index);
         Destroy(gameObject);
     }
 
     void OnMouseDown()
     {
-        if (GameManager.instance.PlayMode == PlayModeType.None)
+        if (GameManager.Instance.PlayMode == PlayModeType.None)
             return;
 
-        GameManager.instance.pressedAnimal = transform;
+        GameManager.Instance.pressedAnimal = transform;
     }
     private void OnMouseOver()
     {
-        if (GameManager.instance.PlayMode == PlayModeType.None)
+        if (GameManager.Instance.PlayMode == PlayModeType.None)
             return;
 
         if (Input.GetMouseButtonUp(0))
-            GameManager.instance.releasedAnimal = transform;
+            GameManager.Instance.releasedAnimal = transform;
     }
 }
