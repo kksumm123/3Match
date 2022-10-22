@@ -37,12 +37,14 @@ public class AnimalMoveSystem
     {
         SwitchAnimalsIndex(animalsList, animal1, animal2);
 
+        // 만약 일치하지 않으면 인덱스 정보를 다시 뒤바꿔줌
         var isMatched = isMacthed?.Invoke();
         if (isMatched == false)
         {
             SwitchAnimalsIndex(animalsList, animal1, animal2);
         }
 
+        // 만약 일치하지 않으면 isMatched 이용한 DoMove Loop를 통해 원위치로 돌아옴
         MovePosition(animal1, animal2, (bool)isMatched);
         MovePosition(animal2, animal1, (bool)isMatched);
     }
