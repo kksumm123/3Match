@@ -13,7 +13,7 @@ public enum AnimalType
 public class Animal : MonoBehaviour
 {
     public AnimalType Animaltype { get; set; }
-    public int Index { get; set; } // as GameManager.x, column 0 ~ 6
+    public int Index { get; set; } //  column 0 ~ 6
     public bool IsMoveing => isMoving;
 
     Animator animator;
@@ -21,7 +21,7 @@ public class Animal : MonoBehaviour
     bool isMoving;
     bool isAlive = true;
 
-    void Start()
+    private void Start()
     {
         isMoving = true;
         rigid = GetComponent<Rigidbody>();
@@ -30,18 +30,37 @@ public class Animal : MonoBehaviour
         transform.name = Animaltype.ToString();
         animator = GetComponent<Animator>();
         animator.Play(Animaltype.ToString());
+
+        StartCheckState();
     }
 
-    void Update()
+    private void StartCheckState()
     {
-        if (isAlive == false) return;
+        StartCoroutine(CheckStateCo());
 
-        CheckMoving();
-        CheckSwipping();
-        CheckUPForce();
+        IEnumerator CheckStateCo()
+        {
+            while (isAlive)
+            {
+                CheckMoving();
+                CheckSwitching();
+                CheckUPForce();
+                yield return null;
+            }
+        }
     }
 
-    void CheckUPForce()
+    private void CheckMoving()
+    {
+        isMoving = rigid.velocity.sqrMagnitude > 0.1f;
+    }
+
+    private void CheckSwitching()
+    {
+        rigid.useGravity = !GameManager.Instance.IsSwitching;
+    }
+
+    private void CheckUPForce()
     {
         // velocity가 0보다 크면 0으로 초기화
         if (rigid.velocity.y > 0)
@@ -50,24 +69,7 @@ public class Animal : MonoBehaviour
         }
     }
 
-    void CheckMoving()
-    {
-        if (rigid.velocity.sqrMagnitude > 0.1f)
-        {
-            isMoving = true;
-        }
-        else
-        {
-            isMoving = false;
-        }
-    }
-
-    void CheckSwipping()
-    {
-        rigid.useGravity = !GameManager.Instance.IsSwitching;
-    }
-
-    public void Destroy()
+    public void DestroyAnimal()
     {
         StartCoroutine(Co());
 
@@ -83,7 +85,7 @@ public class Animal : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
+    private void OnMouseDown()
     {
         if (GameManager.Instance.PlayMode == PlayModeType.None) return;
 

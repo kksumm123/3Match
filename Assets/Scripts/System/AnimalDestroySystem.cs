@@ -38,7 +38,7 @@ public class AnimalDestroySystem
             onDestroyAnimal?.Invoke(count);
             SoundManager.Instance.PlaySFX();
             ScoreUI.Instance.AddScore(count);
-            toDestroyAnimals.ForEach((x) => x.Destroy());
+            toDestroyAnimals.ForEach((x) => x.DestroyAnimal());
             toDestroyAnimals.Clear();
         }
     }

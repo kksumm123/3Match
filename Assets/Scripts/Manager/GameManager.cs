@@ -44,7 +44,7 @@ public class GameManager : Singleton<GameManager>
                                    () => animalControlSystem.IsSwitching);
     }
 
-    IEnumerator Start()
+    private IEnumerator Start()
     {
         escMenuSystem.OnWaitSelectPlayMode();
         yield return new WaitUntil(() => userInputSystem.IsSelectPlayMode());
@@ -74,7 +74,7 @@ public class GameManager : Singleton<GameManager>
         timerSystem.StartTimer();
     }
 
-    void Update()
+    private void Update()
     {
         userInputSystem.TouchAndMove();
 
@@ -84,7 +84,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    void OnGameOver()
+    private void OnGameOver()
     {
         enabled = false;
     }
