@@ -41,6 +41,7 @@ public class TimerSystem
             {
                 GameOverUI.Instance.ShowUI();
                 onGameOver?.Invoke();
+                break;
             }
             yield return null;
         }
