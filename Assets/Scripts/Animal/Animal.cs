@@ -13,12 +13,14 @@ public enum AnimalType
 public class Animal : MonoBehaviour
 {
     public AnimalType Animaltype { get; set; }
+    public int Index { get; set; } // as GameManager.x, column 0 ~ 6
+    public bool IsMoveing => isMoving;
+
     Animator animator;
     Rigidbody rigid;
     bool isMoving;
-    public bool IsMoveing => isMoving;
-    int index;
-    public int Index { get; set; } // as GameManager.x, column 0 ~ 6
+    bool isAlive = true;
+
     void Start()
     {
         isMoving = true;
@@ -29,7 +31,7 @@ public class Animal : MonoBehaviour
         animator = GetComponent<Animator>();
         animator.Play(Animaltype.ToString());
     }
-    bool isAlive = true;
+
     void Update()
     {
         if (isAlive == false)
@@ -59,14 +61,18 @@ public class Animal : MonoBehaviour
         rigid.useGravity = !GameManager.Instance.IsSwipping;
     }
 
-    public IEnumerator Destroy()
+    public void Destroy()
     {
-        animator.Play("DestroyEffect");
-        // Wait 0.4f, cuz DestroyAnimation Lengh = 0.5f
-        yield return new WaitForSeconds(0.4f);
-        GameManager.Instance.Remove(gameObject, Index);
-        GameManager.Instance.Reborn(Index);
-        Destroy(gameObject);
+        StartCoroutine(Co());
+
+        IEnumerator Co()
+        {
+            animator.Play("DestroyEffect");
+            // Wait 0.4f, cuz DestroyAnimation Lengh = 0.5f
+            yield return new WaitForSeconds(0.4f);
+            GameManager.Instance.OnCompleteDestroyAnimal(gameObject, Index);
+            Destroy(gameObject);
+        }
     }
 
     void OnMouseDown()
@@ -76,6 +82,7 @@ public class Animal : MonoBehaviour
 
         GameManager.Instance.pressedAnimal = transform;
     }
+
     private void OnMouseOver()
     {
         if (GameManager.Instance.PlayMode == PlayModeType.None)
